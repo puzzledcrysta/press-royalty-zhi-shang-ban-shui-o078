@@ -21,7 +21,10 @@ def decide(run_id,version,decision,note):
         current = db.execute('SELECT COALESCE(MAX(version),0) FROM reviews WHERE run_id=?',(run_id,)).fetchone()[0]
         if current != version:
             raise DataError('STALE','复核版本已过期，请刷新',409)
-        if (run['book']['mismatched'] or run['quarantine'] or decision=='退回') and not note:
+        mismatched = run['book']['mismatched']
+        if decision=='确认' and mismatched:
+            raise DataError('SETTLE_BLOCKED',f'外部账尚有 {mismatched} 条差异，不能结清')
+        if (mismatched or run['quarantine'] or decision=='退回') and not note:
             raise DataError('REVIEW_NOTE','有差异时须填写复核意见')
         record = {'version':current+1,'decision':decision,'note':note,'changed':datetime.now(timezone.utc).isoformat()}
         db.execute('INSERT INTO reviews VALUES (?,?,?,?,?)',(run_id,*record.values()))

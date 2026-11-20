@@ -33,8 +33,11 @@
 | TRAP-17 | 旧版列名映射 | legacy.csv | `app/modules/contract/schema.py` | `tests/test_contract.py::test_legacy_aliased` |
 | TRAP-18 | 空文件、空白文件与仅表头 | 测试构造 | `app/modules/intake/service.py` | `tests/test_intake.py::test_empty_states` |
 | TRAP-26 | 陈旧复核版本拒绝 | 测试构造 | `app/modules/review/decisions.py` | `tests/test_review.py::test_stale` |
+| TRAP-27 | 账差未核销不能结清 | 测试构造 | `app/modules/review/decisions.py` | `tests/test_review.py::test_settlement_blocked` |
+| TRAP-28 | 批次指纹冲突不覆盖旧结果 | 测试构造 | `app/modules/runs/repository.py` | `tests/test_runs.py::test_stored_result_never_overwritten` |
 | TRAP-10 | half cent | cases.csv | `app/modules/domain/rule.py` | `tests/test_domain.py::test_half_cent` |
 | TRAP-104 | reverse higher | cases.csv | `app/modules/domain/rule.py` | `tests/test_domain.py::test_reverse_higher` |
+| TRAP-105 | 退货只记总数需归档归属 | cases.csv | `app/modules/domain/rule.py` | `tests/test_domain.py::test_tiered_return` |
 
 ## 对账
 

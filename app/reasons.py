@@ -9,6 +9,7 @@ REASONS = {
     'AMOUNT_DELTA': '复算与外部账计量不同', 'BOOK_CONFLICT': '独立账含重复业务键',
     'RUN_UNKNOWN': '没有此批次', 'DEMO_UNKNOWN': '没有此样例', 'STALE': '复核版本已过期',
     'REVIEW_NOTE': '有差异时须填写复核意见', 'REVIEW_DECISION': '复核结论无效',
+    'SETTLE_BLOCKED': '存在未核销账差，不能结清', 'RUN_CONFLICT': '批次指纹冲突，旧结果不可覆盖',
 }
 
 REASONS.update({'ROYALTY_TIER': '合同费档无效', 'ROYALTY_RETURNS': '退量超累计销量', 'DATE': '日期格式无效', 'REV_BLOCKED': '较新来源尚未采信'})

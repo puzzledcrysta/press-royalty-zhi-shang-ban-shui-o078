@@ -37,11 +37,17 @@ def evaluate(row):
         refunds = max(0, min(cap, opening+gross)-max(lower, close))
         subtotal = (copies-refunds)*price*rate
         if copies or refunds:
-            proof.append((f'{lower+1}–{upper or "以上"} 档净计提', subtotal, '元'))
+            band = f'{lower+1}–{upper or "以上"}'
+            proof.append((f'{band} 档出库归属', copies, '册'))
+            if returned:
+                proof.append((f'{band} 档退货归属', refunds, '册'))
+            proof.append((f'{band} 档净计提', subtotal, '元'))
         accrued += copies*price*rate
         reversed_ += refunds*price*rate
         lower = cap
     held = max(D(0), accrued-reversed_)*reserve
+    total = (accrued-reversed_-held+release).quantize(D('0.01'), rounding=ROUND_HALF_UP)
     proof.extend([('出库计提', accrued, '元'), ('实退逆冲', reversed_, '元'),
-                  ('本期留存', held, '元'), ('前期释放', release, '元')])
-    return (accrued-reversed_-held+release).quantize(D('0.01'), rounding=ROUND_HALF_UP), proof
+                  ('本期留存', held, '元'), ('前期释放', release, '元'),
+                  ('本期应付', total, '元')])
+    return total, proof

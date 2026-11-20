@@ -1,5 +1,9 @@
 from concurrent.futures import ThreadPoolExecutor
 from hashlib import sha256
+import json
+import pytest
+from app.errors import DataError
+from app.modules.runs.repository import fetch, persist
 from app.modules.runs.service import run
 
 
@@ -68,3 +72,21 @@ def test_history_reopens_exact_inputs(client, source, book):
     restored = client.get(f'/api/runs/{run_id}/source').json()
     assert b64decode(restored['data_base64']) == source
     assert b64decode(restored['book_base64']) == book
+
+
+def test_stored_result_never_overwritten(client, source, book):
+    run_id = client.post('/api/runs', json={}).json()['manifest']['run_id']
+    stored = fetch(run_id)
+    tampered = json.loads(stored['result'])
+    tampered['accepted'][0]['amount'] = '0.00'
+    with pytest.raises(DataError) as error:
+        persist(run_id, source, book, tampered, stored['created'])
+    assert error.value.code == 'RUN_CONFLICT'
+    assert fetch(run_id)['result'] == stored['result']
+
+
+def test_rerun_keeps_stored_result(client):
+    first = client.post('/api/runs', json={}).json()
+    run_id = first['manifest']['run_id']
+    again = client.post('/api/runs', json={}).json()
+    assert again == first and fetch(run_id)['result'] == json.dumps(first, ensure_ascii=False)

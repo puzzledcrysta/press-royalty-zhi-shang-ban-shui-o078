@@ -157,6 +157,11 @@ async function render() {
       if (ticket === renderEpoch) {
         reviewVersion = timeline[0]?.version || 0;
         byId('review').hidden = false;
+        const confirm = [...byId('decision').options].find(option => option.value === '确认');
+        if (confirm) {
+          confirm.disabled = result.book.mismatched > 0;
+          if (confirm.disabled && confirm.selected) byId('decision').value = '退回';
+        }
       }
     }
     if (ticket === renderEpoch) {
